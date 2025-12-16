@@ -1,10 +1,12 @@
 # My name is Benny. Gerald is my father, and I am going to take over the world. I am a Kenyan child, and I am very nutritious just like my father.
 
 import numpy as np
+from random import randint
+import matplotlib.pyplot as plt
 
 layer_sizes = [784, 16, 16, 10]
 lr = 0.01 # learning rate
-epochs = 1000
+epochs = 50
 
 # filepaths for the images and labels
 TRAIN_IMAGES = "train_images/train-images.idx3-ubyte"
@@ -156,6 +158,7 @@ def test_images(pixels, labels):
         guess, label = find_output(output), labels[i]
         guesses.append((guess, label))
         print(guess, label)
+        display_image(image.reshape(28, 28), True)
     print(get_accuracy(guesses))
 
 def get_accuracy(guesses):
@@ -172,13 +175,39 @@ def ideal_output(num):
     output[num] = 1
     return output
 
+def test_rand(matplot=False):
+    pixels = read_images(TEST_IMAGES)
+    labels = read_labels(TEST_LABELS)
+    num = randint(0, len(pixels))
+    image, label = pixels[num].reshape(-1, 1), labels[num]
+    _, _, _, _, _, output = feed_forward(image, weights, biases)
+    print(f"Guess: {find_output(output)}\nLabel: {label}")
+    display_image(image.reshape(28, 28), matplot)
+
+def display_image(image, matplot=False):
+    for i in range(len(image)):
+        image[i] *= 255
+    if matplot:
+        plt.imshow(image, cmap='gray', vmin=0, vmax=255)
+        plt.axis('off')
+        plt.show()
+    else:
+        for row in image:
+            print("".join(pixel_to_char(pixel) for pixel in row))
+
+
+def pixel_to_char(value):
+    chars = " .:-=+*#%@"
+    index = int((value / 255) * (len(chars) - 1))
+    return chars[index]
+
 def run(x):
     # parse images and labels and put them in a list, then run the train or test function
-    if x == "training":
+    if x == "train":
         pixels = read_images(TRAIN_IMAGES)
         labels = read_labels(TRAIN_LABELS)
         train(epochs, pixels, to_onehot(labels))
-    elif x == "testing":
+    elif x == "test":
         pixels = read_images(TEST_IMAGES)
         labels = read_labels(TEST_LABELS)
         test_images(pixels, labels)
@@ -188,4 +217,4 @@ w0, w1, w2, b1, b2, b3 = load_parameters()
 weights = [w0, w1, w2]
 biases = [b1, b2, b3]
 
-run("training")
+run('test')
