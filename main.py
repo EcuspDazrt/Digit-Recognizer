@@ -3,6 +3,7 @@
 import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
+import threading
 
 layer_sizes = [784, 16, 16, 10]
 lr = 0.01 # learning rate
@@ -90,7 +91,7 @@ def find_output(x):
         if x[i] > max:
             max = x[i]
             index = i
-    return index
+    return index, x[index]
 
 def read_images(path):
     with open(path, "rb") as file:
@@ -157,7 +158,7 @@ def test_images(pixels, labels):
         _, _, _, _, _, output = feed_forward(image, weights, biases)
         guess, label = find_output(output), labels[i]
         guesses.append((guess, label))
-        print(guess, label)
+        print(f'Guess: {guess}')
         display_image(image.reshape(28, 28), True)
     print(get_accuracy(guesses))
 
@@ -175,14 +176,10 @@ def ideal_output(num):
     output[num] = 1
     return output
 
-def test_rand(matplot=False):
-    pixels = read_images(TEST_IMAGES)
-    labels = read_labels(TEST_LABELS)
-    num = randint(0, len(pixels))
-    image, label = pixels[num].reshape(-1, 1), labels[num]
+def test_rand(image, matplot=False):
+    print(image)
     _, _, _, _, _, output = feed_forward(image, weights, biases)
-    print(f"Guess: {find_output(output)}\nLabel: {label}")
-    display_image(image.reshape(28, 28), matplot)
+    return find_output(output)
 
 def display_image(image, matplot=False):
     for i in range(len(image)):
@@ -216,5 +213,3 @@ def run(x):
 w0, w1, w2, b1, b2, b3 = load_parameters()
 weights = [w0, w1, w2]
 biases = [b1, b2, b3]
-
-run('test')
