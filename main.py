@@ -1,5 +1,3 @@
-# My name is Benny. Gerald is my father, and I am going to take over the world. I am a Kenyan child, and I am very nutritious just like my father.
-
 import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
