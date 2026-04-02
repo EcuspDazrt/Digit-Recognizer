@@ -177,7 +177,6 @@ def ideal_output(num):
     return output
 
 def test_rand(image, matplot=False):
-    print(image)
     _, _, _, _, _, output = feed_forward(image, weights, biases)
     return find_output(output)
 

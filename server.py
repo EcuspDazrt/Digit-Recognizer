@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from flask import jsonify
 import uvicorn
+from pydantic import BaseModel
+
 import main
 import numpy as np
 import io
@@ -17,7 +19,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.post("/predict")
+class PredictionResponse(BaseModel):
+    digit: int
+    confidence: float
+
+@app.post("/predict", response_model=PredictionResponse)
 def predict(payload: dict):
     data = payload['image']
     data = data.split(',')[1]
